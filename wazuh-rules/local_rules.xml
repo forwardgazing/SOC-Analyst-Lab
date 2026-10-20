@@ -1,0 +1,22 @@
+<group name="sysmon,windows,">
+  <!-- Правило для детектирования разведки через whoami (T1033) -->
+  <rule id="100100" level="10">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.image">whoami.exe</field>
+    <field name="win.eventdata.integrityLevel">High</field>
+    <description>ALERT! Запущена команда Whoami с правами администратора</description>
+    <mitre>
+      <id>T1033</id>
+    </mitre>
+  </rule>
+
+  <!-- Правило: попытка отключить Windows Defender (T1562.001) -->
+  <rule id="100101" level="12">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.commandLine" condition="contains">Set-MpPreference</field>
+    <description>CRITICAL! Попытка отключить Windows Defender!</description>
+    <mitre>
+      <id>T1562.001</id>
+    </mitre>
+  </rule>
+</group>
