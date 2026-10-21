@@ -19,4 +19,14 @@
       <id>T1562.001</id>
     </mitre>
   </rule>
+    <!-- Правило: Детектирование Pass-the-Hash (Сетевой вход по NTLM) -->
+  <rule id="100102" level="10">
+    <if_sid>60106</if_sid> <!-- Базовое правило Wazuh для успешного входа (4624) -->
+    <field name="win.eventdata.logonType">3</field> <!-- Тип входа 3 (Сетевой) -->
+    <field name="win.eventdata.authenticationPackageName">NTLM</field> <!-- Использование NTLM -->
+    <description>ALERT! Подозрительный сетевой вход с использованием NTLM (Возможен Pass-the-Hash)</description>
+    <mitre>
+      <id>T1550.002</id> <!-- MITRE: Use Alternate Authentication Material: Pass the Hash -->
+    </mitre>
+  </rule>
 </group>
