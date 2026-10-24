@@ -10,7 +10,7 @@
     </mitre>
   </rule>
 
-  <!-- Правило: попытка отключить Windows Defender (T1562.001) -->
+   <!-- Правило: попытка отключить Windows Defender (T1562.001) -->
   <rule id="100101" level="12">
     <if_sid>61603</if_sid>
     <field name="win.eventdata.commandLine" condition="contains">Set-MpPreference</field>
@@ -19,7 +19,7 @@
       <id>T1562.001</id>
     </mitre>
   </rule>
-    <!-- Правило: Детектирование Pass-the-Hash (Сетевой вход по NTLM) -->
+  <!-- Правило: Детектирование Pass-the-Hash (Сетевой вход по NTLM) -->
   <rule id="100102" level="10">
     <if_sid>60106</if_sid> <!-- Базовое правило Wazuh для успешного входа (4624) -->
     <field name="win.eventdata.logonType">3</field> <!-- Тип входа 3 (Сетевой) -->
@@ -27,6 +27,38 @@
     <description>ALERT! Подозрительный сетевой вход с использованием NTLM (Возможен Pass-the-Hash)</description>
     <mitre>
       <id>T1550.002</id> <!-- MITRE: Use Alternate Authentication Material: Pass the Hash -->
+    </mitre>
+  </rule>
+  <!-- Правило: Создание задачи в Планировщике (Закрепление / Persistence) -->
+  <rule id="100106" level="8">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.image" type="pcre2">schtasks.exe$</field>
+    <field name="win.eventdata.commandLine" condition="contains">/create</field>
+    <description>WARNING! Создание задачи в Планировщике Windows (возможное закрепление)</description>
+    <mitre>
+      <id>T1053.005</id>
+    </mitre>
+  </rule>
+
+  <!-- Правило: Добавление пользователя в группу администраторов (Повышение привилегий) -->
+  <rule id="100107" level="12">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.image" type="pcre2">net.exe|net1.exe</field>
+    <field name="win.eventdata.commandLine" type="pcre2">localgroup\s+administrators\s+.*\s+/add</field>
+    <description>CRITICAL! Попытка добавить пользователя в группу администраторов</description>
+    <mitre>
+      <id>T1098</id>
+    </mitre>
+  </rule>
+
+  <!-- Правило: Скачивание файлов через Certutil (Living off the Land) -->
+  <rule id="100108" level="10">
+    <if_sid>61603</if_sid>
+    <field name="win.eventdata.image" type="pcre2">certutil.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">-urlcache|-split</field>
+    <description>ALERT! Скачивание файла из сети с помощью certutil (обход защиты)</description>
+    <mitre>
+      <id>T1105</id>
     </mitre>
   </rule>
 </group>
