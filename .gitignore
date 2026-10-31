@@ -1,0 +1,11 @@
+# Файлы IDE (VS Code, PyCharm)
+.vscode/
+.idea/
+
+# Системный мусор (Mac/Windows)
+.DS_Store
+Thumbs.db
+
+# Локальные логи и временные файлы (чтобы не закинуть гигабайты логов)
+*.log
+*.tmp
