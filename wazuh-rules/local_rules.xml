@@ -1,15 +1,30 @@
-<group name="syslog,windows,">
-  <!-- КЕЙС 1: ДЕТЕКТИРОВАНИЕ ЗАКРЕПЛЕНИЯ (PERSISTENCE) -->
-  <rule id="100200" level="12">
-    <match>useradd</match>
-    <description>CRITICAL: New user created on Linux system (Possible Persistence)!</description>
+<group name="syslog,linux,">
+  <!-- ======================================================= -->
+  <!-- КЕЙС 1: ДЕТЕКТИРОВАНИЕ ЗАКРЕПЛЕНИЯ (PERSISTENCE)        -->
+  <!-- ======================================================= -->
+
+  <!-- 1. Базовое правило: Ловим создание любого пользователя -->
+  <rule id="100200" level="8">
+    <if_sid>5902</if_sid> 
+    <description>INFO: New user created on Linux system.</description>
     <mitre>
       <id>T1136.001</id>
     </mitre>
   </rule>
 
+  <!-- 2. Продвинутое правило: Ловим подозрительные имена -->
   <rule id="100201" level="12">
-    <match>usermod</match>
+    <if_sid>100200</if_sid>
+    <match>admin|root|backup|test</match>
+    <description>CRITICAL: Suspicious user created (Possible Persistence)!</description>
+    <mitre>
+      <id>T1136.001</id>
+    </mitre>
+  </rule>
+
+  <!-- 3. Правило: Добавление пользователя в группу sudo -->
+  <rule id="100202" level="12">
+    <if_sid>5901</if_sid>
     <match>sudo</match>
     <description>CRITICAL: User added to sudo group (Privilege Escalation)!</description>
     <mitre>
@@ -17,17 +32,33 @@
     </mitre>
   </rule>
 
-  <!-- КЕЙС 2: СНИЖЕНИЕ ШУМА (NOISE REDUCTION) -->
+  <!-- 4. КОРРЕЛЯЦИЯ: Если создано 3 пользователя за 1 минуту - это атака! -->
+  <rule id="100203" level="14" frequency="3" timeframe="60">
+    <if_matched_sid>100200</if_matched_sid>
+    <same_source_ip />
+    <description>CRITICAL: Mass user creation detected (Possible automated backdoor deployment)!</description>
+    <mitre>
+      <id>T1136.001</id>
+    </mitre>
+  </rule>
+
+  <!-- ======================================================= -->
+  <!-- КЕЙС 2: СНИЖЕНИЕ ШУМА (NOISE REDUCTION)                 -->
+  <!-- ======================================================= -->
+  
+  <!-- Глушим шум от сканера rootcheck -->
   <rule id="100400" level="0">
     <if_sid>510</if_sid>
     <description>Silencing rootcheck scan noise</description>
   </rule>
 
+  <!-- Глушим шум от сессий PAM -->
   <rule id="100500" level="0">
     <if_sid>5501, 5502</if_sid>
     <description>Silencing PAM session noise</description>
   </rule>
 
+  <!-- Глушим шум от перезапусков агента -->
   <rule id="100501" level="0">
     <if_sid>502, 503, 506</if_sid>
     <description>Silencing Wazuh agent start/stop</description>
