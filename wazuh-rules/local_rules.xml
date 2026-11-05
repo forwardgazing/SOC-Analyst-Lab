@@ -63,4 +63,29 @@
     <if_sid>502, 503, 506</if_sid>
     <description>Silencing Wazuh agent start/stop</description>
   </rule>
+    <!-- ======================================================= -->
+  <!-- КЕЙС 3: АКТИВНОЕ РЕАГИРОВАНИЕ (ACTIVE RESPONSE)         -->
+  <!-- ======================================================= -->
+  <rule id="100310" level="10" frequency="3" timeframe="120">
+    <if_matched_sid>5710</if_matched_sid>
+    <same_source_ip />
+    <description>Custom: Brute force detected (3 attempts). Blocking IP.</description>
+    <mitre>
+      <id>T1110</id>
+    </mitre>
+    <group>authentication_failures,</group>
+  </rule>
+
+  <!-- ======================================================= -->
+  <!-- КЕЙС 4: EDR-МОНИТОРИНГ ПРОЦЕССОВ (AUDITD)               -->
+  <!-- ======================================================= -->
+  <rule id="100320" level="10">
+    <if_sid>80700</if_sid>
+    <field name="audit.key">suspicious_activity</field>
+    <description>EDR: Suspicious process execution (Nmap) detected on endpoint.</description>
+    <mitre>
+      <id>T1046</id>
+    </mitre>
+    <group>edr,audit,</group>
+  </rule>
 </group>
