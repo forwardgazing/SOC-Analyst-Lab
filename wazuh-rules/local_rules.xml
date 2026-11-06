@@ -1,4 +1,4 @@
-<group name="syslog,linux,">
+<group name="syslog,linux,windows,">
   <!-- ======================================================= -->
   <!-- КЕЙС 1: ДЕТЕКТИРОВАНИЕ ЗАКРЕПЛЕНИЯ (PERSISTENCE)        -->
   <!-- ======================================================= -->
@@ -43,29 +43,28 @@
   </rule>
 
   <!-- ======================================================= -->
-  <!-- КЕЙС 2: СНИЖЕНИЕ ШУМА (NOISE REDUCTION)                 -->
+  <!-- КЕЙС 2: СНИЖЕНИЕ ШУМА ДЛЯ LINUX                         -->
   <!-- ======================================================= -->
   
-  <!-- Глушим шум от сканера rootcheck -->
   <rule id="100400" level="0">
     <if_sid>510</if_sid>
     <description>Silencing rootcheck scan noise</description>
   </rule>
 
-  <!-- Глушим шум от сессий PAM -->
   <rule id="100500" level="0">
     <if_sid>5501, 5502</if_sid>
     <description>Silencing PAM session noise</description>
   </rule>
 
-  <!-- Глушим шум от перезапусков агента -->
   <rule id="100501" level="0">
     <if_sid>502, 503, 506</if_sid>
     <description>Silencing Wazuh agent start/stop</description>
   </rule>
-    <!-- ======================================================= -->
+
+  <!-- ======================================================= -->
   <!-- КЕЙС 3: АКТИВНОЕ РЕАГИРОВАНИЕ (ACTIVE RESPONSE)         -->
   <!-- ======================================================= -->
+  
   <rule id="100310" level="10" frequency="3" timeframe="120">
     <if_matched_sid>5710</if_matched_sid>
     <same_source_ip />
@@ -79,6 +78,7 @@
   <!-- ======================================================= -->
   <!-- КЕЙС 4: EDR-МОНИТОРИНГ ПРОЦЕССОВ (AUDITD)               -->
   <!-- ======================================================= -->
+  
   <rule id="100320" level="10">
     <if_sid>80700</if_sid>
     <field name="audit.key">suspicious_activity</field>
@@ -87,5 +87,33 @@
       <id>T1046</id>
     </mitre>
     <group>edr,audit,</group>
+  </rule>
+
+  <!-- ======================================================= -->
+  <!-- КЕЙС 6: СНИЖЕНИЕ ШУМА ДЛЯ WINDOWS (RULE TUNING)         -->
+  <!-- ======================================================= -->
+  
+  <!-- Глушим шум от легитимного использования net.exe -->
+  <rule id="100600" level="0">
+    <if_sid>92039</if_sid>
+    <description>Silencing net.exe account discovery noise</description>
+  </rule>
+
+  <!-- Глушим шум от общих проверок Discovery -->
+  <rule id="100601" level="0">
+    <if_sid>92031</if_sid>
+    <description>Silencing generic Discovery activity noise</description>
+  </rule>
+
+  <!-- Глушим успешные входы в систему (в лаборатории) -->
+  <rule id="100602" level="0">
+    <if_sid>60106</if_sid>
+    <description>Silencing Windows logon success noise</description>
+  </rule>
+
+  <!-- Глушим фоновую службу защиты -->
+  <rule id="100603" level="0">
+    <if_sid>60642</if_sid>
+    <description>Silencing Software protection service noise</description>
   </rule>
 </group>
