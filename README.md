@@ -99,6 +99,9 @@
 
 **Автоматическая блокировка IP атакующего (Kali) в Ubuntu:**
 ![Active Response Kali](images/active_response_kali.png)
+
+---
+
 ## ⚙️ Архитектура развертывания
 
 Лаборатория развернута на базе официального Docker-дистрибутива Wazuh (single-node). 
