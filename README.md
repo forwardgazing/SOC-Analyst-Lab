@@ -11,7 +11,11 @@
 *   **Инфраструктура:** Postfix (SMTP Relay)
 
 ---
+## 🗺️ Архитектура лаборатории
 
+![Архитектура SOC-Labs](images/soc_architecture.svg)
+
+---
 ## 🚀 Реализованные кейсы и навыки
 
 ### Кейс 1: Детектирование скрытого пользователя (Persistence) на Linux и Astra Linux
