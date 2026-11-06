@@ -101,7 +101,14 @@
 ![Active Response Kali](images/active_response_kali.png)
 
 ---
+### Кейс 9: Валидация EDR с помощью Atomic Red Team (Windows)
+*   **Сценарий:** Проверка эффективности настроенных правил Sysmon и Wazuh при симуляции реальных техник атак.
+*   **Действие:** На хост Windows установлен фреймворк **Atomic Red Team**. Выполнен тест **T1059.001** (Command and Scripting Interpreter: PowerShell), имитирующий скрытый запуск скрипта с флагами `-nop -w hidden -enc`.
+*   **Результат:** EDR-система успешно зафиксировала выполнение подозрительного процесса. Wazuh сгенерировал алерт по правилу `92027` ("Powershell process spawned powershell instance"), подтвердив работоспособность мониторинга. В событии зафиксирована полная командная строка и хеш-сумма процесса.
 
+![EDR Atomic Red Team](images/edr_atomic_red_team.png)
+
+---
 ## ⚙️ Архитектура развертывания
 
 Лаборатория развернута на базе официального Docker-дистрибутива Wazuh (single-node). 
